@@ -3,17 +3,21 @@ import { db } from '../firebase';
 import { collection, onSnapshot, addDoc, doc, deleteDoc} from 'firebase/firestore';
 
 const Formulario = () => {
-    const [fruta, setFruta] = useState('');
-    const [descripcion, setDescripcion] = useState('');
-    const [listaFrutas, setListaFrutas] = useState([])
+    const [nombre, setNombre] = useState('');
+    const [apellidos, setApellidos] = useState('');
+    const [edad, setEdad] = useState('');
+    const [profesion, setProfesion] = useState('');
+    const [telefono, setTelefono] = useState('');
+    
+    const [lista, setLista] = useState([])
 
 
     useEffect(() => {
 
         const obtenerDatos = async () => {    
           try {
-            await onSnapshot(collection(db, "frutas"), (querySnapshot) => {    
-              setListaFrutas(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            await onSnapshot(collection(db, "list"), (querySnapshot) => {    
+              setLista(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
             });
           } catch (error) {
             console.log(error);
@@ -26,38 +30,54 @@ const Formulario = () => {
     const eliminar = async id => {
         console.log(id)
         try{
-            await deleteDoc(doc(db,'frutas',id))
+            await deleteDoc(doc(db,'list',id))
         }catch(error){
             console.log(error)
         }
     }
-    const guardarFrutas = async (e) =>{
+    const guardarEmpleados = async (e) =>{
         e.preventDefault()
-        if(!fruta.trim()){
-            alert('ingrese el nombre de la fruta')
+        if(!nombre.trim()){
+            alert('ingrese el nombre de la nombre')
             return
         }
-        if(!descripcion.trim()){
-            alert('ingrese la descripcion')
+        if(!apellidos.trim()){
+            alert('ingrese la apellidos')
+            return
+        }
+        if(!edad.trim()){
+            alert('ingrese la edad del empleado')
+            return
+        }
+        if(!profesion.trim()){
+            alert('ingrese la profesión')
+            return
+        }
+        if(!telefono.trim()){
+            alert('ingrese el numero de telefono')
             return
         }
 
-        try{
-       
-           
-            const data = await addDoc(collection(db,'frutas'),{
+        try{   
+            const data = await addDoc(collection(db,'list'),{
                 
-                nombreFruta: fruta,
-                nombreDescripcion: descripcion
+                namenombre: nombre,
+                nameapellidos: apellidos,
+                nameedad: edad,
+                nameprofesion: profesion,
+                nametelefono: telefono
             })
 
-            setListaFrutas([
-                ...listaFrutas,
-                {nombreFruta:fruta, nombreDescripcion:descripcion, id:data.id}
+            setLista([
+                ...lista,
+                {namenombre:nombre, nameapellidos:apellidos, nameedad: edad, nameprofesion: profesion, nametelefono: telefono, id:data.id}
             ])
 
-            setFruta('')
-            setDescripcion('')
+            setNombre('')
+            setApellidos('')
+            setEdad('')
+            setProfesion('')
+            setTelefono('')
             e.target.reset()
         }catch(error){
             console.log(error)
@@ -66,17 +86,17 @@ const Formulario = () => {
 
   return (
     <div className='container mt-5'>
-        <h1 className='text-center'>CRUD BÁSICO</h1>
+        <h1 className='text-center'>EMPLEADOS</h1>
         <hr/>
         <div className='row'>
             <div className="col-8">
-                <h4 className="text-center">Listado de Frutas</h4>
+                <h4 className="text-center">Listado de empleados</h4>
                 <ul className="list-group">
                     {
-                        listaFrutas.map(item =>(
+                        lista.map(item =>(
                             <li className='list-group-item' key={item.id}>
-                                <span className='lead'>{item.nombreFruta}-{item.nombreDescripcion}</span>
-                                <button className='btn btn-danger btn-sm float-end mx-2' onClick={()=>eliminar(item.id)}>Eliminar</button>
+                                <span className='lead'>{item.namenombre}  -  {item.nameapellidos}  -  {item.nameedad} años  -  {item.nametelefono}  -  {item.nameprofesion}</span>
+                                <button className='btn btn-danger btn-sm float-end mx-2' onClick={()=>eliminar(item.id)}>Despedido</button>
                             </li>
                         ))
                     }
@@ -85,26 +105,49 @@ const Formulario = () => {
         
         <div className='col-4'>
             <h4 className="text-center">
-                Agregar Frutas
+                Agregar Nuevo Empleado
             </h4>
-            <form onSubmit={guardarFrutas}>
+            <form onSubmit={guardarEmpleados}>
                 <input 
                 className='form-control mb-2'
                 type="text" 
-                placeholder='Ingrese Fruta'
-                onChange={(e)=>setFruta(e.target.value)}
-                value = {fruta}
+                placeholder='Ingrese el Nombre'
+                onChange={(e)=>setNombre(e.target.value)}
+                value = {nombre}
                 ></input>
+                
                 <input 
                 className='form-control mb-2'
                 type="text" 
-                placeholder='Ingrese Descripción'
-                onChange={(e) => setDescripcion(e.target.value)}
-                value = {descripcion}></input>
+                placeholder='Ingrese el Apellido'
+                onChange={(e) => setApellidos(e.target.value)}
+                value = {apellidos}></input>
+
+                <input 
+                className='form-control mb-2'
+                type="number" 
+                placeholder='Ingrese la edad'
+                onChange={(e) => setEdad(e.target.value)}
+                value = {edad}></input>
+                
+                <input 
+                className='form-control mb-2'
+                type="text" 
+                placeholder='Ingrese el número de teléfono'
+                onChange={(e) => setTelefono(e.target.value)}
+                value = {telefono}></input>
+                
+                <input 
+                className='form-control mb-2'
+                type="text" 
+                placeholder='Ingrese la profesión del empleado'
+                onChange={(e) => setProfesion(e.target.value)}
+                value = {profesion}></input>
+                
                 <button 
                 className='btn btn-primary btn-block'
                 type='submit'
-                >Agregar</button>
+                >Registrar</button>
             </form>
         </div>
         </div>   
