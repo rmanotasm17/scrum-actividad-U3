@@ -33,6 +33,15 @@ const Formulario = () => {
     }
     const guardarFrutas = async (e) =>{
         e.preventDefault()
+        if(!fruta.trim()){
+            alert('ingrese el nombre de la fruta')
+            return
+        }
+        if(!descripcion.trim()){
+            alert('ingrese la descripcion')
+            return
+        }
+
         try{
        
            
